@@ -27,6 +27,21 @@ router.post('/register', (req, res) => {
     })
 });
 
+router.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  Users.findByName(username)
+    .then(user => {
+      const validPass = bcrypt.compareSync(password, user.user_password);
+      if(!validPass)
+        return res.status(401).json({message: "invalid credentials"})
+      else{
+        const token = generateToken(user);
+        res.cookie('token', token);
+        res.json({'message': `Welcome ${user.user_username}`, 'token': token})
+      }
+    })
+});
+
 
 
 

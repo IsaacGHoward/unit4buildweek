@@ -17,7 +17,7 @@ function findByName(user_username){
   return db('users as u')
     .innerJoin('role as r', 'r.role_id', 'u.role_id')
     .where('u.user_username', user_username)
-    .first('u.user_id', 'u.user_username', 'r.role_name')
+    .first('u.user_id', 'u.user_username','u.user_password','r.role_name')
 }
 
 function add(user){
