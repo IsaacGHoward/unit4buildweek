@@ -59,14 +59,14 @@ function checkPasswordLength(req,res,next) {
 
 function checkValidRole(req,res,next){
   if(!req.body.role_id){
-    Roles.findRoleByName('User')
+    Roles.findRoleByName('Owner')
     .then(role => {
       if(role){
         req.body.role_id = role.role_id;
         next();
       }
       else 
-        res.status(422).send({"message" : "No Role Field, and the default User role does not exist"})
+        res.status(422).send({"message" : "No Role Field, and the default Owner role does not exist"})
     })
   }
   else{
