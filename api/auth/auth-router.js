@@ -6,7 +6,9 @@ const JWT_SECRET = 'thisisthesecret';
 
 const Users = require("../users/users-model");
 
-router.post('/register', (req, res) => {
+const middleware = require('./auth-middleware');
+
+router.post('/register', middleware.checkUsernameFree, middleware.checkPasswordLength, (req, res) => {
   let user = req.body;
   const hash = bcrypt.hashSync(user.user_password, 12);
   user.user_password = hash;
