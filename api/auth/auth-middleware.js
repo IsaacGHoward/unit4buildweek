@@ -3,6 +3,7 @@ const JWT_SECRET = 'thisisthesecret';
 const jwt = require("jsonwebtoken")
 
 const db = require('../users/users-model');
+const Roles = require('../roles/roles-model');
 
 const restricted = (req, res, next) => {
  //const token = req.cookies.token; 
@@ -56,9 +57,34 @@ function checkPasswordLength(req,res,next) {
     next();
 }
 
+function checkValidRole(req,res,next){
+  if(!req.body.role_id){
+    Roles.findRoleByName('User')
+    .then(role => {
+      if(role){
+        req.body.role_id = role.role_id;
+        next();
+      }
+      else 
+        res.status(422).send({"message" : "No Role Field, and the default User role does not exist"})
+    })
+  }
+  else{
+    Roles.findRoleById(req.body.role_id)
+    .then(role => {
+      if(role)
+        next();
+      else
+        res.status(422).send({"message" : `No such role exists with ID of ${req.body.role_id}`});
+    })
+  }
+
+}
+
 module.exports = {
   restricted,
   checkUsernameFree,
   checkPasswordLength,
-  checkUsernameValid
+  checkUsernameValid,
+  checkValidRole
 }
