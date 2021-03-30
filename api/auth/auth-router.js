@@ -29,11 +29,11 @@ router.post('/register', middleware.checkUsernameFree, middleware.checkPasswordL
     })
 });
 
-router.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  Users.findByName(username)
+router.post('/login', middleware.checkUsernameValid, middleware.checkPasswordLength, (req, res) => {
+  const { user_username, user_password } = req.body;
+  Users.findByName(user_username)
     .then(user => {
-      const validPass = bcrypt.compareSync(password, user.user_password);
+      const validPass = bcrypt.compareSync(user_password, user.user_password);
       if(!validPass)
         return res.status(401).json({message: "invalid credentials"})
       else{

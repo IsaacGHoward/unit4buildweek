@@ -35,6 +35,20 @@ function checkUsernameFree(req,res,next) {
   }
 }
 
+function checkUsernameValid(req,res,next) {
+  if(!req.body.user_username)
+    res.status(422).send({"message": "Missing Username Field"})
+  else{
+    db.findByName(req.body.user_username)
+    .then(result => {
+      if(!result)
+        res.status(422).send({"message": "User does not exist"});
+      else
+        next();
+    })
+  }
+}
+
 function checkPasswordLength(req,res,next) {
   if(!req.body.user_password || req.body.user_password.length < 4)
     res.status(422).send({"message": "Password must be longer than 3 chars"})
@@ -45,5 +59,6 @@ function checkPasswordLength(req,res,next) {
 module.exports = {
   restricted,
   checkUsernameFree,
-  checkPasswordLength
+  checkPasswordLength,
+  checkUsernameValid
 }
