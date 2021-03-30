@@ -15,8 +15,14 @@ const restricted = (req, res, next) => {
      if(err)
       return res.status(401).json({"message": "Token invalid"})
      else{
-      req.token = decoded;
-      next();
+       if(decoded.role === "Owner"){
+        req.token = decoded;
+        next();
+       }
+       else{
+        return res.status(401).json({"message": "Your role does not grant you permission to view this page"})
+       }
+      
      }
    })
  }
