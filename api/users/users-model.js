@@ -22,7 +22,10 @@ function findByName(user_username){
 
 function add(user){
   return db('users')
-    .insert(user)
+    .insert(user, 'user_id')
+    .then(saved => {
+      return findById(saved[0])
+    })
 }
 
 /*

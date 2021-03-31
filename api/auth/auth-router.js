@@ -14,17 +14,9 @@ router.post('/register', middleware.checkUsernameFree, middleware.checkPasswordL
   user.user_password = hash;
   Users.add(user)
     .then(saved => {
-      if(saved){
-        Users.find()
-          .then((response) => {
-            Users.findById(response.length)
-            .then(theuser => {
-              res.status(201).json(theuser)
-            })
-          })
-        
-      }
-      else
+      if(saved)
+        res.status(201).json(saved)
+      else 
         res.status(500).json({'message': 'Could not add user'});
     })
 });
