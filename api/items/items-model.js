@@ -30,10 +30,25 @@ function findItemsByOwnerId(user_id){
     .select('*')
 }
 
+function add(user_id, item){
+    return db('items')
+      .insert(item, 'item_id')
+      .then(saved => {
+        return db('users_items')
+          .insert({'user_id' : user_id, 'item_id' : saved[0]})
+          .then(() => {
+            return findItemById(saved[0])
+          })
+      })
+}
+
+
+
 module.exports = {
   find,
   findItemById,
   findItemByName,
   findItemsByCategoryId,
-  findItemsByOwnerId
+  findItemsByOwnerId,
+  add,
 };

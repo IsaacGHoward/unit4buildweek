@@ -33,7 +33,36 @@ function checkOwnerValid(req,res,next) {
   }
 }
 
+function checkValidItem(req,res,next){
+  if(!req.body.item_name || !req.body.item_price || !req.body.item_location || !req.body.category_id)
+    res.status(422).send({"message" : "Missing one or more required fields (check API docs)"})
+  else 
+    next()
+}
+
+function checkDuplicateItem(req,res,next){
+  Items.findItemByName(req.body.item_name)
+    .then(item => {
+      if(item)
+        res.status(422).send({"message" : "Item already exists with the given name"})
+      else 
+        next()
+    })
+}
+
+function checkItemCategory(req,res,next){
+  Categories.findCategoryById(req.body.category_id)
+    .then(result => {
+      if(!result)
+        res.status(422).send({"message": "Category does not exist with the given ID"});
+      else
+        next()
+    })
+}
 module.exports = {
   checkCategoryValid,
-  checkOwnerValid
+  checkOwnerValid,
+  checkValidItem,
+  checkDuplicateItem,
+  checkItemCategory
 }

@@ -1,7 +1,7 @@
 const router = require("express").Router();
 
 const Users = require("../users/users-model");
-const Items = require('./items-model');
+const Items = require('./items-model.js');
 const Categories = require('../categories/categories-model');
 
 const middleware = require('./items-middleware');
@@ -44,6 +44,16 @@ router.get('/owner/:user_id', restricted, middleware.checkOwnerValid, (req,res) 
         res.send(items)
       else
         res.send({'message' : 'owner has no items'})
+    })
+})
+
+router.post('/', restricted, middleware.checkValidItem, middleware.checkDuplicateItem, middleware.checkItemCategory, (req,res) => {
+  Items.add(req.token.subject, req.body)
+    .then(saved => {
+      if(saved)
+        res.send(saved);
+      else
+        res.status(500).json({'message': 'Could not add item'});
     })
 })
 
