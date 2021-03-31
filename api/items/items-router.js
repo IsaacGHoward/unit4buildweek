@@ -37,6 +37,15 @@ router.get('/categories/:category_id', restricted, middleware.checkCategoryValid
     })
 })
 
+router.get('/owner/:user_id', restricted, middleware.checkOwnerValid, (req,res) => {
+  Items.findItemsByOwnerId(req.params.user_id)
+    .then(items => {
+      if(items.length > 0)
+        res.send(items)
+      else
+        res.send({'message' : 'owner has no items'})
+    })
+})
 
 
 module.exports = router;
