@@ -59,6 +59,8 @@ function checkItemCategory(req,res,next){
         next()
     })
 }
+
+//function checkItemExists
 module.exports = {
   checkCategoryValid,
   checkOwnerValid,
