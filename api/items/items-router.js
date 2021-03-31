@@ -2,6 +2,7 @@ const router = require("express").Router();
 
 const Users = require("../users/users-model");
 const Items = require('./items-model');
+const Categories = require('../categories/categories-model');
 
 const middleware = require('./items-middleware');
 const { restricted } = require('../auth/auth-middleware');
@@ -16,6 +17,25 @@ router.get('/', restricted, (req, res) => {
     })
 });
 
+router.get('/categories', restricted, (req,res) => {
+  Categories.find()
+    .then(response => {
+      if(response.length > 0)
+        res.send(response)
+      else
+        res.send({'message' : 'no categories'})
+    })
+})
+
+router.get('/categories/:category_id', restricted, middleware.checkCategoryValid, (req,res) => {
+  Items.findItemsByCategoryId(req.params.category_id)
+    .then(items => {
+      if(items.length > 0)
+        res.send(items)
+      else
+        res.send({'message':'no items in category'})
+    })
+})
 
 
 
