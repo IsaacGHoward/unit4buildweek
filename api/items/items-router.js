@@ -47,7 +47,8 @@ router.get('/owner/:user_id', restricted, middleware.checkOwnerValid, (req,res) 
     })
 })
 
-router.post('/', restricted, middleware.checkValidItem, middleware.checkDuplicateItem, middleware.checkItemCategory, (req,res) => {
+//Adds item to list general table of items, plus owner's items
+router.post('/', restricted, middleware.checkValidItem, middleware.checkItemCategory, middleware.checkDuplicateItem, (req,res) => {
   Items.add(req.token.subject, req.body)
     .then(saved => {
       if(saved)
@@ -57,6 +58,16 @@ router.post('/', restricted, middleware.checkValidItem, middleware.checkDuplicat
     })
 })
 
+//Adds specified Item to the owner's list of items
+router.post('/owner/:item_id', restricted, middleware.checkItemExists, (req,res) => {
+  Items.addToOwner(req.token.subject, req.params.item_id)
+    .then(results => {
+      if(results)
+        res.send(results)
+      else 
+        res.status(500).json({'message': 'Could not add item to Owner'});
+    })
+})
 //router.put('/:item_id', restricted, )
 
 module.exports = router;

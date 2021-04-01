@@ -42,6 +42,15 @@ function add(user_id, item){
       })
 }
 
+function addToOwner(user_id, item_id){
+  return db('users_items')
+    .insert({'user_id' : user_id, 'item_id' : item_id})
+    .then(() => {
+      return findItemsByOwnerId(user_id);
+    })
+    
+}
+
 
 
 module.exports = {
@@ -51,4 +60,5 @@ module.exports = {
   findItemsByCategoryId,
   findItemsByOwnerId,
   add,
+  addToOwner
 };

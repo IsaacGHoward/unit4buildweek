@@ -50,6 +50,16 @@ function checkDuplicateItem(req,res,next){
     })
 }
 
+function checkItemExists(req,res,next){
+  Items.findItemById(req.params.item_id)
+    .then(item => {
+      if(item)
+        next()
+      else 
+        res.status(422).send({"message" : "Item does not exist with the given ID"})
+    })
+}
+
 function checkItemCategory(req,res,next){
   Categories.findCategoryById(req.body.category_id)
     .then(result => {
@@ -66,5 +76,6 @@ module.exports = {
   checkOwnerValid,
   checkValidItem,
   checkDuplicateItem,
+  checkItemExists,
   checkItemCategory
 }
