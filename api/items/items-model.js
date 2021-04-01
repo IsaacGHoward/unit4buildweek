@@ -30,6 +30,13 @@ function findItemsByOwnerId(user_id){
     .select('*')
 }
 
+function findOwnersByItemId(item_id){
+  return db('users_items as ui')
+    .innerJoin('users as u', 'u.user_id', 'ui.user_id')
+    .where('item_id', item_id)
+    .select('u.user_id')
+}
+
 function add(user_id, item){
     return db('items')
       .insert(item, 'item_id')
@@ -42,13 +49,27 @@ function add(user_id, item){
       })
 }
 
+function updateItem(item_id, item){
+  return db('items')
+    .where('item_id', item_id)
+    .update(item)
+    .then(() => {
+      return findItemById(item_id);
+    })
+}
+
 function addToOwner(user_id, item_id){
   return db('users_items')
     .insert({'user_id' : user_id, 'item_id' : item_id})
     .then(() => {
       return findItemsByOwnerId(user_id);
     })
-    
+}
+
+function removeFromOwner(user_id, item_id){
+  return db('users_items')
+    .where({'user_id' : user_id, 'item_id' : item_id})
+    .del()
 }
 
 
@@ -59,6 +80,9 @@ module.exports = {
   findItemByName,
   findItemsByCategoryId,
   findItemsByOwnerId,
+  findOwnersByItemId,
   add,
-  addToOwner
+  updateItem,
+  addToOwner,
+  removeFromOwner
 };

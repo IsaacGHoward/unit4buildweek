@@ -68,6 +68,38 @@ router.post('/owner/:item_id', restricted, middleware.checkItemExists, (req,res)
         res.status(500).json({'message': 'Could not add item to Owner'});
     })
 })
-//router.put('/:item_id', restricted, )
+
+//Updates item if only one owner has it, and if multiple do it clones it with new info for the owner making the request
+router.put('/:item_id', restricted, middleware.checkItemExists, (req,res) => {
+  Items.findOwnersByItemId(req.params.item_id)
+    .then(owners => {
+      if(owners.length > 1){
+        Items.findItemById(req.params.item_id)
+          .then(item => {
+            delete item.item_id;
+            let newData = req.body;
+            console.log({...item, ...newData})
+            Items.add(req.token.subject, {...item, ...newData})
+              .then(saved => {
+                if(saved){
+                  Items.removeFromOwner(req.token.subject, req.params.item_id)
+                    .then(() => {
+                      res.send(saved);
+                    })
+                }
+              })
+          })
+      }
+      else if(owners.length === 1){
+        Items.updateItem(req.params.item_id, req.body)
+          .then(updated => {
+            if(updated)
+              res.send(updated)
+            else 
+              res.status(500).json({'message': 'Could not update item'});
+          })
+      }
+    })
+})
 
 module.exports = router;
