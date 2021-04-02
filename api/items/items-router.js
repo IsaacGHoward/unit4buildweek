@@ -61,7 +61,7 @@ router.post('/', restricted, middleware.checkValidItem, middleware.checkItemCate
 //Adds specified Item to the owner's list of items
 
 //need to make sure you can't add duplicates of same item to an owner
-router.post('/owner/:item_id', restricted, middleware.checkItemExists, (req,res) => {
+router.post('/owner/:item_id', restricted, middleware.checkItemExists, middleware.checkDupeItemAdd, (req,res) => {
   Items.addToOwner(req.token.subject, req.params.item_id)
     .then(results => {
       if(results)
@@ -72,8 +72,6 @@ router.post('/owner/:item_id', restricted, middleware.checkItemExists, (req,res)
 })
 
 //Updates item if only one owner has it, and if multiple do it clones it with new info for the owner making the request
-
-//need to add way to make sure it only updates if you own the item
 router.put('/:item_id', restricted, middleware.checkItemExists, middleware.checkOwners, (req,res) => {
   Items.findOwnersByItemId(req.params.item_id)
     .then(owners => {

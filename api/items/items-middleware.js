@@ -73,6 +73,7 @@ function checkItemCategory(req,res,next){
 function checkOwners(req,res,next){
   Items.findOwnersByItemId(req.params.item_id)
     .then((owners) => {
+      req.numOwners = owners.length;
       let owned = false;
       owners.forEach(owner => {
         if(req.token.subject === owner.user_id)
@@ -84,6 +85,22 @@ function checkOwners(req,res,next){
         res.status(403).send({"message" : "You do not have permission to update an item you do not own"})
     })
 }
+
+function checkDupeItemAdd(req,res,next){
+  Items.findOwnersByItemId(req.params.item_id)
+    .then((owners) => {
+      let owned = false;
+      owners.forEach(owner => {
+        if(req.token.subject === owner.user_id)
+          owned = true;
+      });
+      if(owned)
+        res.status(403).send({"message" : "You already have this item in your inventory"})
+      else
+        next();
+    })
+
+}
 //function checkItemExists
 module.exports = {
   checkCategoryValid,
@@ -92,5 +109,6 @@ module.exports = {
   checkDuplicateItem,
   checkItemExists,
   checkItemCategory,
-  checkOwners
+  checkOwners,
+  checkDupeItemAdd
 }
