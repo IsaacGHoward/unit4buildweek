@@ -3,6 +3,7 @@ const db = require('../data/db-config.js');
 function find(){
   return db('items as i')
     .select('*')
+    .orderBy('i.item_id', 'asc')
 }
 
 function findItemById(item_id){
@@ -21,6 +22,7 @@ function findItemsByCategoryId(category_id){
   return db('items as i')
     .where('i.category_id', category_id)
     .select('*')
+    .orderBy('i.item_id', 'asc')
 }
 
 function findItemsByOwnerId(user_id){
@@ -28,6 +30,7 @@ function findItemsByOwnerId(user_id){
     .innerJoin('items as i', 'i.item_id', 'ui.item_id')
     .where('user_id', user_id)
     .select('*')
+    .orderBy('i.item_id', 'asc')
 }
 
 function findOwnersByItemId(item_id){

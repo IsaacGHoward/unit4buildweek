@@ -3,6 +3,7 @@ const db = require('../data/db-config.js');
 function find(){
   return db('category as c')
     .select('*')
+    .sortBy('c.category_id', 'asc')
 }
 
 function findCategoryById(category_id){
