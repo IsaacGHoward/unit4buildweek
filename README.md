@@ -1,10 +1,204 @@
 # Build Week Scaffolding for Node and PostgreSQL
+---
+## Base URL: https://african-marketplace-unit-4.herokuapp.com/
+---
+|Type     |Endpoint           |Description        |Auth|
+|:-------:|:-----------------------:|:----------------------:|:--:|
+|POST     |/api/auth/register       |Register User           |No  |
+|POST     |/api/auth/login          |Login User              |No  |
+|GET      |/api/users               |get all users           |Yes |
+|GET      |/api/items               |get all items           |Yes |
+|GET      |/api/items/categories    |get all categories      |Yes |
+|GET      |/api/items/categories/:category_id|get all items in category|Yes |
+|GET      |/api/items/owner/:user_id|get all items from a user|Yes |
+|POST     |/api/items               |create new item         |Yes |
+|POST     |/api/items/owner/:item_id|add existing item to owner|Yes |
+|PUT      |/api/items/:item_id      |update item             |Yes |
+|DELETE   |/api/items/:item_id      |delete item             |Yes |
 
-## Video Tutorial
+## Token must be in the header under Authorization for Auth endpoints
+---
+## POST Register
+### Endpoint /api/auth/register
+```
+    {
+        "user_username": "string",       required
+        "user_password": "string",       required
+        "role_id": integer,
+    }
+```
+#### Returns
+```
+    {
+        "user_id": "user id",
+        "user_username": "registered user name",
+        "role_name": "registered user's role (defaults to Owner)",
+    }
+```
+---
+## POST Login
+### Endpoint /api/auth/login
+```
+    {
+        "user_username": "user's registered user name",     required
+        "user_password": "user's password"                  required
+    }
+```
+#### Returns
+```
+    {
+        "message": "success message",
+        "token": "authentication token",
+    }
+```
+---
+## GET all Users
+### Endpoint /api/users
+#### Returns Array of All Users
+```
+    [
+        {
+            "user_id": integer,
+            "user_username": "user's name",
+            "user_password": "hashed user password",
+            "role_name": "user's role name"
+        }
+    ]
+```
+---
+## GET all Items
+### Endpoint /api/items
+#### Returns Array of All Items
+```
+    [
+        {
+            "item_id": integer,
+            "item_name": "name of item",
+            "item_description": "description of item (can be null)" ,
+            "item_price": "string of item's price",
+            "item_location": "location of item",
+            "category_id": integer
+        }
+    ]
+```
+---
+## GET all Categories
+### Endpoint /api/items/categories 
+#### Returns Array of All Categories
+```
+    [
+        {
+            "category_id": integer,
+            "category_name": "name of category"
+        }
+    ]
+```
+---
+## GET Items by Category
+### Endpoint /api/items/categories/:category_id
+#### Returns Array of All Items in Category
+```
+    [
+        {
+            "item_id": integer,
+            "item_name": "name of item",
+            "item_description": "description of item (can be null)" ,
+            "item_price": "string of item's price",
+            "item_location": "location of item",
+            "category_id": integer
+        }
+    ]
+```
+---
+## GET Items by User
+### Endpoint /api/items/owner/:user_id
+#### Returns Array of All Items a User has
+```
+    [
+        {
+            "user_id": integer,
+            "item_id": integer,
+            "item_name": "name of item",
+            "item_description": "description of item (can be null)" ,
+            "item_price": "string of item's price",
+            "item_location": "location of item",
+            "category_id": integer
+        }
+    ]
+```
+---
+## POST add new Item
+### Endpoint /api/items  
+```
+    {
+        "item_name":"name of new item (unique)",       required
+        "item_price":"price of new item",              required
+        "item_location":"USA",                         required
+        "item_description":"description of item",
+        "category_id":integer                          required
+    }
+```
+#### Returns
+```
+    {
+        "item_id": integer,
+        "item_name": "name of item",
+        "item_description": "description of item (can be null)",
+        "item_price": "string of item's price",
+        "item_location": "location of item",
+        "category_id": integer
+    }
+```
+---
+## POST Add existing Item to Owner by given ID
+### Endpoint /api/items/owner/:item_id
+#### Returns Array of Owner's Items
+```
+    [
+        {
+            "user_id": integer,
+            "item_id": integer,
+            "item_name": "name of item",
+            "item_description": "description of item (can be null)" ,
+            "item_price": "string of item's price",
+            "item_location": "location of item",
+            "category_id": integer
+        }
+    ]
+```
+---
+## PUT Edit existing Item by given ID
+### Endpoint /api/items/:item_id
+```
+    {
+        "item_name":"name of new item (unique)",       Edit any of these fields
+        "item_price":"price of new item",              
+        "item_location":"USA",                         
+        "item_description":"description of item",
+        "category_id":integer                                
+    }
+```
+#### Returns Edited Item
+```
+    {
+        "item_name":"name of new item (unique)",       
+        "item_price":"price of new item",              
+        "item_location":"USA",                         
+        "item_description":"description of item",
+        "category_id":integer                                
+    }
+```
+---
+## DELETE Delete Item with given ID
+### Endpoint /api/items/:item_id
+#### Returns message response
+```
+    {
+        "message": "Removed Item with ID : {ID} from DB"
+    }
+```
+---
 
-The following tutorial explains how to set up this project using PostgreSQL and Heroku.
-
-[![Setting up PostgreSQL for Build Week](https://img.youtube.com/vi/kTO_tf4L23I/maxresdefault.jpg)](https://www.youtube.com/watch?v=kTO_tf4L23I)
 
 ## Requirements
 
