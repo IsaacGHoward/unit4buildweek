@@ -82,7 +82,7 @@ function checkOwners(req,res,next){
       if(owned)
         next();
       else 
-        res.status(403).send({"message" : "You do not have permission to update an item you do not own"})
+        res.status(403).send({"message" : "You do not have permission to modify an item you do not own"})
     })
 }
 

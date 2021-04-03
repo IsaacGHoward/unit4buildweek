@@ -75,6 +75,17 @@ function removeFromOwner(user_id, item_id){
     .del()
 }
 
+function remove(user_id, item_id){
+  return db('users_items')
+    .where({'user_id' : user_id, 'item_id' : item_id})
+    .del()
+    .then(() => {
+      return db('items')
+        .where('item_id', item_id)
+        .del()
+    })
+}
+
 
 
 module.exports = {
@@ -87,5 +98,6 @@ module.exports = {
   add,
   updateItem,
   addToOwner,
-  removeFromOwner
+  removeFromOwner,
+  remove
 };

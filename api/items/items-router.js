@@ -59,8 +59,6 @@ router.post('/', restricted, middleware.checkValidItem, middleware.checkItemCate
 })
 
 //Adds specified Item to the owner's list of items
-
-//need to make sure you can't add duplicates of same item to an owner
 router.post('/owner/:item_id', restricted, middleware.checkItemExists, middleware.checkDupeItemAdd, (req,res) => {
   Items.addToOwner(req.token.subject, req.params.item_id)
     .then(results => {
@@ -102,6 +100,22 @@ router.put('/:item_id', restricted, middleware.checkItemExists, middleware.check
           })
       }
     })
+})
+
+//Deletes item if only one owner has it, and if multiple do it only removes it from the association table for the user deleting
+router.delete('/:item_id', restricted, middleware.checkItemExists, middleware.checkOwners, (req,res) => {
+  if(req.numOwners > 1){
+    Items.removeFromOwner(req.token.subject, req.params.item_id)
+      .then(() => {
+        res.send({'message' : `Removed Item with ID : ${req.params.item_id} from user ${req.token.username}`});
+      })
+  }
+  else{
+    Items.remove(req.token.subject, req.params.item_id)
+      .then(() => {
+        res.send({'message' : `Removed Item with ID : ${req.params.item_id} from DB`})
+      })
+  }
 })
 
 module.exports = router;
